@@ -1,3 +1,10 @@
+// shortController.js
+// Express router for handling video "shorts" endpoints.
+// Routes:
+// POST /upload   - Accepts JSON { videoLink, name, tags } and saves a Short document
+// GET  /shorts   - Returns all saved Short documents
+// GET  /:id      - Returns a single Short by MongoDB _id
+// Note: this controller expects the request body to be JSON (express.json()).
 const express = require('express');
 const Short = require('../Schema/shortsSchema');
 
