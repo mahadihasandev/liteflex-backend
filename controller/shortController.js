@@ -1,32 +1,9 @@
-const multer = require('multer');
-const path = require('path');
 const express = require('express');
 const Short = require('../Schema/shortsSchema');
 
-const storage = multer.diskStorage({
-  destination: ( cb) => cb(null, path.join(__dirname, '../uploads')),
-  filename: ( file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'video-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    const videoTypes = /video\/(mp4|mpeg|quicktime|x-msvideo|webm)/;
-    if (videoTypes.test(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only video files are allowed'));
-    }
-  },
-  limits: { fileSize: 500 * 1024 * 1024 }
-});
-
 const router = express.Router();
 
-router.post('/upload', upload.single('video'), async (req, res) => {
+router.post('/upload', async (req, res) => {
   try {
     const { name, tags, videoLink } = req.body;
     let videoUrl = '';
@@ -36,8 +13,6 @@ router.post('/upload', upload.single('video'), async (req, res) => {
         return res.status(400).json({ error: 'Invalid video URL. Must start with http:// or https://'});
       }
       videoUrl = link;
-    } else if (req.file) {
-      videoUrl = `http://localhost:8000/uploads/${req.file.filename}`;
     } else {
       return res.status(400).json({ error: 'No video file or link provided' });
     }
