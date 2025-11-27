@@ -24,6 +24,7 @@ router.post('/upload', async (req, res) => {
       return res.status(400).json({ error: 'No video file or link provided' });
     }
 
+    // Accept tags as either CSV strings or arrays coming from the client.
     const parsedTags = tags ? (Array.isArray(tags) ? tags : JSON.parse(tags)) : [];
 
     let thumbnail = '';
@@ -32,6 +33,7 @@ router.post('/upload', async (req, res) => {
     if (linkForThumb) {
       const ytMatch = linkForThumb.match(/(?:youtube(?:-nocookie)?\.com\/(?:.*v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
       if (ytMatch && ytMatch[1]) {
+        // Cache a lightweight preview so the list renders quicker than loading embeds.
         thumbnail = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
       }
     }
